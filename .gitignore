@@ -1,0 +1,13 @@
+CLAUDE.md
+CLAUDE.local.md
+.env
+.env.local
+node_modules/
+.next/
+prisma/dev.db
+api-key.txt
+New Text Document.txt
+*.db
+*.db-journal
+src/generated/
+.claude/settings.local.json
