@@ -40,6 +40,9 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # This is an optional setting that allows Claude to read CI results on PRs
+          additional_permissions: |
+            actions: read
           custom_instructions: |
             the project is already running with all the dependencies installed.
             the server is already running at http://localhost:3000. Logs from it are being writtne to
