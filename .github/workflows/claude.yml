@@ -30,16 +30,33 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Project setup
+        run: |
+          npm run setup
+          npm run dev:daemon
+
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-
-          # This is an optional setting that allows Claude to read CI results on PRs
-          additional_permissions: |
-            actions: read
-
+          custom_instructions: |
+            the project is already running with all the dependencies installed.
+            the server is already running at http://localhost:3000. Logs from it are being writtne to
+            logs.txt file . If needed, you can query the db with 'sqlite3' cli. if needed, use the mcp__playright set of tools to launch a browser and interact with the web app. You can also read the logs.txt file to debug any issues.  
+          mcp_config: |
+            {
+              "mcpServers": [
+                {
+                  "playright": {
+                    "command": "npx",
+                    "args":["@playwright/mcp@latest", "--allowed-origins", "http://localhost:3000","cdn.tailwindcss.com","esm.sh"],
+                  }
+                }
+              ] 
+            }
+            allowed-tools:"Bash(git pull *), Bash(npm run *), mcp__playright, mcp__playright__screenshot, mcp__playright__click, mcp__playright__fill, mcp__playright__goto, mcp__playright__waitForSelector, mcp__playright__evaluate, Bash(Get-Content \"C:\\Users\\bisce\\AppData\\Local\\Temp\\claude\\C--Users-bisce-OneDrive-Documents-angular-uigen\\a46a13ca-85e4-44e9-b010-30786c23d831\\tasks\\bwb1gjqmd.output\" -Tail 20), mcp__playright__selectOption, mcp__playright__hover, mcp__playright__press, mcp__playright__check, mcp__playright__uncheck, mcp__playright__setInputFiles, mcp__playright__dragAndDrop, mcp__playright__close, mcp__playright__contexto, mcp__playright__frame, mcp__playright__innerText, mcp__playright__textContent, mcp__playright__getAttribute, mcp__playright__getProperty, mcp__playright__boundingBox, mcp__playright__cookies, mcp__playright__evaluateOnSelector, mcp__playright__evaluate"
+          # Optional: Restrict Claude to only use certain tools for this workflow. If not specified
           # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
           # prompt: 'Update the pull request description to include a summary of changes.'
 
@@ -48,3 +65,4 @@ jobs:
           # or https://code.claude.com/docs/en/cli-reference for available options
           # claude_args: '--allowed-tools Bash(gh pr *)'
 
+ 
